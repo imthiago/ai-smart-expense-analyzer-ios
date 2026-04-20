@@ -9,6 +9,7 @@ final class AppContainer {
     // MARK: - Infrastructure
     let featureFlags: FeatureFlags
     let logger: AppLogger
+    let tracer: ExecutionTracer
 
     // MARK: - Persistency
     let coreDataStack: CoreDataStack
@@ -48,7 +49,8 @@ final class AppContainer {
     private(set) lazy var addExpenseUseCase: any AddExpenseUseCaseProtocol = {
         AddExpenseUseCase(
             expenseRepository: expenseRepository,
-            categorizeExpenseUseCase: categorizeExpenseUseCase
+            categorizeExpenseUseCase: categorizeExpenseUseCase,
+            tracer: tracer
         )
     }()
 
@@ -69,6 +71,7 @@ final class AppContainer {
     init() throws {
         featureFlags = FeatureFlags()
         logger = AppLogger()
+        tracer = ExecutionTracer(logger: logger)
         coreDataStack = try CoreDataStack()
 
         logger.info(.persistence, "CoreData stack loaded successfully")
