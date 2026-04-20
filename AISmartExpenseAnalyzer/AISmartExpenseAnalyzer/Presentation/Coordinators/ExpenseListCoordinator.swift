@@ -75,6 +75,13 @@ final class ExpenseListCoordinator: Coordinator {
     }
 
     private func showInsights(for expenses: [Expense]) {
-        // TODO: To be implemented
+        let viewModel = InsightListViewModel(
+            expenses: expenses,
+            generateInsightsUseCase: container.generateInsightsUseCase
+        )
+
+        let viewController = InsightListViewController(viewModel: viewModel)
+
+        navigationController.pushViewController(viewController, animated: true)
     }
 }
