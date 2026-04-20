@@ -35,22 +35,22 @@ enum OpenAIRequestBuilder {
     /// Instrui o modelo a agir como um categorizador financeiro e sempre
     /// responder com um schema JSON estrito — sem prosa, sem markdown.
     private static let systemPrompt = """
-    Você é um categorizador de despesas financeiras. Seu trabalho é classificar descrições de despesas \
-    em exatamente uma destas categorias: alimentação, transporte, saúde, entretenimento, compras, serviços, outros.
-
-    Sempre responda com um JSON válido seguindo exatamente este esquema:
-    {
-      "category": "<uma das categorias acima>",
-      "confidence": <float entre 0.0 e 1.0>,
-      "reasoning": "<uma frase explicando por que você escolheu esta categoria>",
-      "alternatives": [
-        { "category": "<categoria>", "confidence": <float> }
-      ]
-    }
-
-    O array "alternatives" deve conter até 2 categorias alternativas, ordenadas por confiança decrescente. \
-    Se não houver alternativas aplicáveis, retorne um array vazio.
-    """
+        You are a financial expense categorizer. Your job is to classify expense descriptions \
+        into exactly one of these categories: food, transport, health, entertainment, shopping, utilities, other.
+        
+        Always respond with valid JSON matching this exact schema:
+        {
+          "category": "<one of the categories above>",
+          "confidence": <float between 0.0 and 1.0>,
+          "reasoning": "<one sentence explaining why you chose this category>",
+          "alternatives": [
+            { "category": "<category>", "confidence": <float> }
+          ]
+        }
+        
+        The "alternatives" array should contain up to 2 runner-up categories, ordered by confidence descending. \
+        If no alternatives apply, return an empty array.
+        """
 
     private static func userPrompt(description: String, amount: Decimal) -> String {
         "Categorize essa despesa — descrição: \"\(description)\", quantia: \(amount)"

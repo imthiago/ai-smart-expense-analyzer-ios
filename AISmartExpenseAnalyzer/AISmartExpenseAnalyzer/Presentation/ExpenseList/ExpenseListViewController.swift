@@ -168,8 +168,6 @@ final class ExpenseListViewController: UIViewController {
             }
             .store(in: &cancellables)
 
-        // Repassa as seleções de chip da FilterView para o ViewModel.
-        // Uma categoria nil significa "Todos" — mapeia para o filtro vazio.
         filterView.selectedCategory
             .map { category in
                 category.map { ExpenseFilter(category: $0) } ?? .empty
@@ -192,9 +190,17 @@ final class ExpenseListViewController: UIViewController {
     }
 
     // MARK: - Actions
-    @objc private func addTapped() { viewModel.addExpenseTapped() }
-    @objc private func insightsTapped() { viewModel.insightsTapped() }
-    @objc private func handleRefresh() { viewModel.refresh() }
+    @objc private func addTapped() {
+        viewModel.addExpenseTapped()
+    }
+
+    @objc private func insightsTapped() {
+        viewModel.insightsTapped()
+    }
+
+    @objc private func handleRefresh() {
+        viewModel.refresh()
+    }
 
     private func showError(_ message: String) {
         let alert = UIAlertController(title: "Erro", message: message, preferredStyle: .alert)
