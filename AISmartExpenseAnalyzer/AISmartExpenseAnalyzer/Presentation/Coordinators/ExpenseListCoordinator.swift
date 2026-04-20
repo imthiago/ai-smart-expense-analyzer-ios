@@ -52,7 +52,22 @@ final class ExpenseListCoordinator: Coordinator {
 
     // MARK: - Navigation
     private func showAddExpense() {
-        // TODO: To be implemented
+        let coordinator = AddExpenseCoordinator(
+            navigationController: navigationController,
+            container: container
+        )
+
+        coordinator.onExpenseAdded = { [weak self] _ in
+            self?.listViewModel?.refresh()
+        }
+
+        coordinator.onFinish = { [weak self, weak coordinator] in
+            if let coordinator {
+                self?.removeChild(coordinator)
+            }
+        }
+        addChild(coordinator)
+        coordinator.start()
     }
 
     private func showAIDecision(for expense: Expense) {

@@ -34,6 +34,7 @@ final class AddExpenseViewModel {
 
     init(addExpenseUseCase: AddExpenseUseCaseProtocol) {
         self.addExpenseUseCase = addExpenseUseCase
+        bindValidation()
     }
 
     func submitTapped() {
