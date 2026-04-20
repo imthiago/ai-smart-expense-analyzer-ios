@@ -8,6 +8,7 @@
 import Foundation
 
 enum OpenAIRequestBuilder {
+    // TODO: Tratar force unwrap
     static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
 
     static func build(description: String, amount: Decimal, apiKey: String) throws -> URLRequest {

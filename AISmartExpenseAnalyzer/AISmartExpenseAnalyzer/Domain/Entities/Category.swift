@@ -22,13 +22,13 @@ enum Category: String, CaseIterable, Codable, Equatable {
 
     var displayName: String {
         switch self {
-        case .food:             return "Food & Drinks"
-        case .transport:        return "Transport"
-        case .health:           return "Health"
-        case .entertainment:    return "Entertainment"
-        case .shopping:         return "Shopping"
-        case .utilities:        return "Utilities"
-        case .other:            return "Other"
+        case .food:             return "Comidas & Bebidas"
+        case .transport:        return "Transporte"
+        case .health:           return "Saúde"
+        case .entertainment:    return "Entretenimento"
+        case .shopping:         return "Compras"
+        case .utilities:        return "Utilidades"
+        case .other:            return "Outros"
         }
     }
 

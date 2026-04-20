@@ -27,7 +27,8 @@ enum ExpenseMapper {
 
         let category = Category(rawValue: entity.categoryRawValue ?? "") ?? .other
         let description = entity.expenseDescription ?? ""
-        let amount = entity.amount.decimalValue
+        // TODO: Tratar force unwrap
+        let amount = entity.amount!.decimalValue
 
         var aiDecision: AIDecision?
         if let data = entity.aiDecisionData {

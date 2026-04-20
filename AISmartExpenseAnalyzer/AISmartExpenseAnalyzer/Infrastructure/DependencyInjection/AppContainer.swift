@@ -60,6 +60,10 @@ final class AppContainer {
         GenerateInsightsUseCase()
     }()
 
+    private(set) lazy var deleteExpenseUseCase: any DeleteExpenseUseCaseProtocol = {
+        DeleteExpenseUseCase(expenseRepository: expenseRepository)
+    }()
+
     /// Cria o container e carrega o armazenamento persistente
     /// - Throws: Lança um erro caso `CoreDataStack` não possa ser inicializado
     init() throws {
