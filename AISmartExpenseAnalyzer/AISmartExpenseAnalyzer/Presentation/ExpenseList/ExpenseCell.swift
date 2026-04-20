@@ -50,7 +50,7 @@ final class ExpenseCell: UITableViewCell {
     private let aiBadge: UILabel = {
         let label = UILabel()
         label.text = "AI"
-        label.font = .systemFont(ofSize: 10, weight: .bold)
+        label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = .systemIndigo
         label.backgroundColor = .systemIndigo.withAlphaComponent(0.12)
         label.layer.cornerRadius = 4
