@@ -20,6 +20,7 @@ final class ExpenseListViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 72
         tableView.delegate = self
+        tableView.dataSource = self
         tableView.refreshControl = refreshControl
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.accessibilityIdentifier = "expense_list_table"
@@ -50,12 +51,7 @@ final class ExpenseListViewController: UIViewController {
     }()
 
     // MARK: - Data Source
-    private enum Section { case main }
-    private typealias DataSource = UITableViewDiffableDataSource<Section, UUID>
-    private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, UUID>
-
-    private var dataSource: DataSource!
-    private var expenseIndex: [UUID: Expense] = [:]
+    private var expenses: [Expense] = []
 
     // MARK: - Combine
     private var cancellables = Set<AnyCancellable>()
@@ -75,7 +71,6 @@ final class ExpenseListViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupLayout()
-        setupDataSource()
         bindViewModel()
         viewModel.viewDidLoad()
     }
@@ -128,26 +123,12 @@ final class ExpenseListViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
     }
 
-    // TODO: Tratar force unwrap
-    private func setupDataSource() {
-        dataSource = DataSource(tableView: tableView) { [weak self] tableView, indexPath, id in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: ExpenseCell.reuseIdentifier,
-                for: indexPath
-            ) as! ExpenseCell
-            if let expense = self?.expenseIndex[id] {
-                cell.configure(with: expense)
-            }
-            return cell
-        }
-    }
-
     // MARK: - Binding
     private func bindViewModel() {
         viewModel.$expenses
             .receive(on: RunLoop.main)
             .sink { [weak self] expenses in
-                self?.applySnapshot(expenses: expenses)
+                self?.updateExpenses(expenses)
             }
             .store(in: &cancellables)
 
@@ -178,15 +159,11 @@ final class ExpenseListViewController: UIViewController {
             .store(in: &cancellables)
     }
 
-    // MARK: - Snapshot
-    private func applySnapshot(expenses: [Expense]) {
-        expenseIndex = Dictionary(uniqueKeysWithValues: expenses.map { ($0.id, $0) })
+    // MARK: - Update TableView
+    private func updateExpenses(_ newExpenses: [Expense]) {
+        expenses = newExpenses
         emptyStateLabel.isHidden = !expenses.isEmpty
-
-        var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(expenses.map(\.id))
-        dataSource.apply(snapshot, animatingDifferences: true)
+        tableView.reloadData()
     }
 
     // MARK: - Actions
@@ -213,20 +190,38 @@ final class ExpenseListViewController: UIViewController {
 extension ExpenseListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let id = dataSource.itemIdentifier(for: indexPath),
-              let expense = expenseIndex[id] else { return }
-        viewModel.selectExpense(expense)
+        guard indexPath.row < expenses.count else { return }
+        viewModel.selectExpense(expenses[indexPath.row])
     }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let id = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        guard indexPath.row < expenses.count else { return nil }
+        let expense = expenses[indexPath.row]
 
         let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, done in
-            self?.viewModel.deleteExpense(id: id)
+            self?.viewModel.deleteExpense(id: expense.id)
             done(true)
         }
 
         delete.image = UIImage(systemName: "trash")
         return UISwipeActionsConfiguration(actions: [delete])
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ExpenseListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        expenses.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ExpenseCell.reuseIdentifier,
+            for: indexPath
+        ) as? ExpenseCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: expenses[indexPath.row])
+        return cell
     }
 }

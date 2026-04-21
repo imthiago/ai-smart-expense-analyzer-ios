@@ -13,11 +13,12 @@ final class InsightListViewController: UIViewController {
     private let viewModel: InsightListViewModel
 
     // MARK: - Components
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.register(InsightCell.self, forCellReuseIdentifier: InsightCell.reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
+        tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -41,12 +42,7 @@ final class InsightListViewController: UIViewController {
         return label
     }()
 
-    // MARK: - Data Source
-    private enum Section { case main }
-    private typealias DataSource = UITableViewDiffableDataSource<Section, UUID>
-    // TODO: Remover force unwrap
-    private var dataSource: DataSource!
-    private var insightIndex: [UUID: Insight] = [:]
+    private var insights: [Insight] = []
 
     // MARK: - Combine
     private var cancellables = Set<AnyCancellable>()
@@ -65,7 +61,6 @@ final class InsightListViewController: UIViewController {
         title = "Insights"
         view.backgroundColor = .systemGroupedBackground
         setupLayout()
-        setupDataSource()
         bindViewModel()
         viewModel.viewDidLoad()
     }
@@ -95,29 +90,13 @@ extension InsightListViewController {
     }
 }
 
-// MARK: - Data Source
-extension InsightListViewController {
-    private func setupDataSource() {
-        dataSource = DataSource(tableView: tableView) { [weak self] tableView, indexPath, id in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: InsightCell.reuseIdentifier,
-                for: indexPath
-            ) as! InsightCell
-            if let insight = self?.insightIndex[id] {
-                cell.configure(with: insight)
-            }
-            return cell
-        }
-    }
-}
-
 // MARK: - Binding
 extension InsightListViewController {
     private func bindViewModel() {
         viewModel.$insights
             .receive(on: RunLoop.main)
             .sink { [weak self] insights in
-                self?.applySnapshot(insights: insights)
+                self?.updateInsights(insights)
             }
             .store(in: &cancellables)
 
@@ -131,15 +110,30 @@ extension InsightListViewController {
     }
 }
 
-// MARK: - Snapshot
+// MARK: - Update Insights
 extension InsightListViewController {
-    private func applySnapshot(insights: [Insight]) {
-        insightIndex = Dictionary(uniqueKeysWithValues: insights.map { ($0.id, $0) })
+    private func updateInsights(_ newInsights: [Insight]) {
+        insights = newInsights
         emptyLabel.isHidden = !insights.isEmpty
-
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(insights.map(\.id))
-        dataSource.apply(snapshot, animatingDifferences: true)
+        tableView.reloadData()
     }
 }
+
+// MARK: - UITableViewDataSource
+extension InsightListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        insights.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: InsightCell.reuseIdentifier,
+            for: indexPath
+        ) as? InsightCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: insights[indexPath.row])
+        return cell
+    }
+}
+
