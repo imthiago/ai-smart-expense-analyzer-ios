@@ -96,7 +96,7 @@ extension AIDecisionViewController {
         iconView.layer.cornerRadius = 32
         iconView.layer.masksToBounds = true
         iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconView.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        iconView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         iconView.heightAnchor.constraint(equalToConstant: 64).isActive = true
 
         let category = viewModel.expense.category
