@@ -61,12 +61,96 @@ final class AIDecisionViewController: UIViewController {
     }
 
     private func populate() {
-        
+        contentStack.addArrangedSubview(makeExpenseHeader())
+        contentStack.addArrangedSubview(makeCategoryCard())
+
+        if viewModel.hasAIDecision {
+            contentStack.addArrangedSubview(makeReasoningCard())
+            if !viewModel.alternativeCategories.isEmpty {
+                contentStack.addArrangedSubview(makeAlternativesCard())
+            }
+            contentStack.addArrangedSubview(makeMetadataCard())
+        }
     }
 }
 
 // MARK: - Factory subview methods
 extension AIDecisionViewController {
+    private func makeExpenseHeader() -> UIView {
+        let amountLabel = UILabel()
+        amountLabel.text = viewModel.expenseAmount
+        amountLabel.font = .systemFont(ofSize: 34, weight: .bold)
+        amountLabel.textAlignment = .center
+        amountLabel.accessibilityIdentifier = "ai_decision_amount"
+
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = viewModel.expenseDescription
+        descriptionLabel.font = .systemFont(ofSize: 16)
+        descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.numberOfLines = 2
+
+        return makeCard(arrangedSubViews: [amountLabel, descriptionLabel], spacing: 6)
+    }
+
+    private func makeCategoryCard() -> UIView {
+        let iconView = UIView()
+        iconView.layer.cornerRadius = 32
+        iconView.layer.masksToBounds = true
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+        iconView.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        iconView.heightAnchor.constraint(equalToConstant: 64).isActive = true
+
+        let category = viewModel.expense.category
+        iconView.backgroundColor = category.color.withAlphaComponent(0.15)
+
+        let iconImageView = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .medium)
+        iconImageView.image = UIImage(systemName: viewModel.categorySymbolName, withConfiguration: config)
+        iconImageView.tintColor = category.color
+        iconImageView.contentMode = .scaleAspectFit
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        iconView.addSubview(iconImageView)
+        NSLayoutConstraint.activate([
+            iconImageView.centerXAnchor.constraint(equalTo: iconView.centerXAnchor),
+            iconImageView.centerYAnchor.constraint(equalTo: iconView.centerYAnchor)
+        ])
+
+        let categoryLabel = UILabel()
+        categoryLabel.text = viewModel.categoryDisplayName
+        categoryLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        categoryLabel.textAlignment = .center
+        categoryLabel.accessibilityIdentifier = "ai_decision_category_name"
+
+        let confidenceBadge = ConfidenceBadgeView()
+        confidenceBadge.confidence = viewModel.confidence
+        confidenceBadge.translatesAutoresizingMaskIntoConstraints = false
+        confidenceBadge.accessibilityIdentifier = "ai_decision_confidence_badge"
+
+        let iconStack = UIStackView(arrangedSubviews: [iconView])
+        iconStack.axis = .horizontal
+        iconStack.alignment = .center
+        iconStack.distribution = .equalCentering
+
+        let badgeStack = UIStackView(arrangedSubviews: [confidenceBadge])
+        badgeStack.axis = .horizontal
+        badgeStack.alignment = .center
+
+        return makeCard(arrangedSubViews: [iconStack, categoryLabel, badgeStack], spacing: 10)
+    }
+
+    private func makeReasoningCard() -> UIView {
+        let titleLabel = makeSectionTitle("Porque essa categoria?")
+
+        let reasoningLabel = UILabel()
+        reasoningLabel.text = viewModel.reasoning
+        reasoningLabel.font = .systemFont(ofSize: 15)
+        reasoningLabel.textColor = .label
+        reasoningLabel.numberOfLines = 0
+        reasoningLabel.accessibilityIdentifier = "ai_decision_reasoning"
+
+        return makeCard(arrangedSubViews: [titleLabel, reasoningLabel], spacing: 8)
+    }
     private func makeAlternativesCard() -> UIView {
         let titleLabel = makeSectionTitle("Alternativas consideradas")
         let rows = viewModel.alternativeCategories.map { alt -> UIView in
