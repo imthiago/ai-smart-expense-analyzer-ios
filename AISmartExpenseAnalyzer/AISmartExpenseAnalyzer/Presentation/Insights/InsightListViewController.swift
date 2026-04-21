@@ -15,7 +15,7 @@ final class InsightListViewController: UIViewController {
     // MARK: - Components
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "InsightCell")
+        tableView.register(InsightCell.self, forCellReuseIdentifier: InsightCell.reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -99,14 +99,12 @@ extension InsightListViewController {
 extension InsightListViewController {
     private func setupDataSource() {
         dataSource = DataSource(tableView: tableView) { [weak self] tableView, indexPath, id in
-            var cell = tableView.dequeueReusableCell(withIdentifier: "InsightCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: InsightCell.reuseIdentifier,
+                for: indexPath
+            ) as! InsightCell
             if let insight = self?.insightIndex[id] {
-                cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = insight.message
-                cell.textLabel?.numberOfLines = 0
-                cell.imageView?.image = UIImage(systemName: insight.type.symbolName)
-                cell.imageView?.tintColor = insight.type.color
-                cell.selectionStyle = .none
+                cell.configure(with: insight)
             }
             return cell
         }
