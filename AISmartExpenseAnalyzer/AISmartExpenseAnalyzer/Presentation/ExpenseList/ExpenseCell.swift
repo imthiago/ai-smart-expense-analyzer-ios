@@ -91,9 +91,6 @@ final class ExpenseCell: UITableViewCell {
 
         aiBadge.isHidden = !expense.wasAICategorized
         pendingBadge.isHidden = !expense.isCategorizationPending
-
-        accessibilityLabel = "\(expense.description), \(expense.amount.formatted(.currency(code: "BRL")))"
-        accessibilityIdentifier = "expense_cell_\(expense.id)"
     }
 
     // MARK: - Setup

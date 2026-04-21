@@ -23,7 +23,7 @@ final class ExpenseListViewController: UIViewController {
         tableView.dataSource = self
         tableView.refreshControl = refreshControl
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.accessibilityIdentifier = "expense_list_table"
+
         return tableView
     }()
 
@@ -33,7 +33,7 @@ final class ExpenseListViewController: UIViewController {
     private lazy var filterView: FilterView = {
         let view = FilterView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.accessibilityIdentifier = "expense_list_filter_view"
+
         return view
     }()
 
@@ -46,7 +46,7 @@ final class ExpenseListViewController: UIViewController {
         label.textColor = .secondaryLabel
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.accessibilityIdentifier = "expense_list_empty_state"
+
         return label
     }()
 
@@ -75,7 +75,6 @@ final class ExpenseListViewController: UIViewController {
 
     private func setupNavigationBar() {
         title = "Despesas"
-        navigationController?.navigationBar.prefersLargeTitles = true
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .add,

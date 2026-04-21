@@ -33,6 +33,7 @@ final class AIDecisionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "AI Decision"
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = .systemGroupedBackground
         setupLayout()
         populate()
@@ -79,7 +80,6 @@ extension AIDecisionViewController {
         amountLabel.text = viewModel.expenseAmount
         amountLabel.font = .systemFont(ofSize: 34, weight: .bold)
         amountLabel.textAlignment = .center
-        amountLabel.accessibilityIdentifier = "ai_decision_amount"
 
         let descriptionLabel = UILabel()
         descriptionLabel.text = viewModel.expenseDescription
@@ -118,12 +118,10 @@ extension AIDecisionViewController {
         categoryLabel.text = viewModel.categoryDisplayName
         categoryLabel.font = .systemFont(ofSize: 20, weight: .semibold)
         categoryLabel.textAlignment = .center
-        categoryLabel.accessibilityIdentifier = "ai_decision_category_name"
 
         let confidenceBadge = ConfidenceBadgeView()
         confidenceBadge.confidence = viewModel.confidence
         confidenceBadge.translatesAutoresizingMaskIntoConstraints = false
-        confidenceBadge.accessibilityIdentifier = "ai_decision_confidence_badge"
 
         let iconStack = UIStackView(arrangedSubviews: [iconView])
         iconStack.axis = .horizontal
@@ -145,7 +143,6 @@ extension AIDecisionViewController {
         reasoningLabel.font = .systemFont(ofSize: 15)
         reasoningLabel.textColor = .label
         reasoningLabel.numberOfLines = 0
-        reasoningLabel.accessibilityIdentifier = "ai_decision_reasoning"
 
         return makeCard(arrangedSubViews: [titleLabel, reasoningLabel], spacing: 8)
     }

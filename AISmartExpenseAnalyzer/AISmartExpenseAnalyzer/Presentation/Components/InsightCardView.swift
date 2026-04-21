@@ -50,8 +50,6 @@ final class InsightCardView: UIView {
         iconView.image = UIImage(systemName: insight.type.symbolName)
         iconView.tintColor = insight.type.color
         borderAccent.backgroundColor = insight.type.color
-        accessibilityLabel = insight.message
-        accessibilityIdentifier = "insight_card_\(insight.id)"
     }
 
     // MARK: - Setup

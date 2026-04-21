@@ -29,7 +29,6 @@ final class AddExpenseViewController: UIViewController {
         tf.font = .systemFont(ofSize: 32, weight: .bold)
         tf.textAlignment = .center
         tf.borderStyle = .none
-        tf.accessibilityIdentifier = "add_expense_amount_field"
         return tf
     }()
 
@@ -39,7 +38,6 @@ final class AddExpenseViewController: UIViewController {
         tf.font = .systemFont(ofSize: 16)
         tf.borderStyle = .roundedRect
         tf.returnKeyType = .done
-        tf.accessibilityIdentifier = "add_expense_description_field"
         return tf
     }()
 
@@ -56,7 +54,6 @@ final class AddExpenseViewController: UIViewController {
         config.title = "Salvar"
         config.cornerStyle = .large
         let button = UIButton(configuration: config)
-        button.accessibilityIdentifier = "add_expense_submit_button"
         return button
     }()
 

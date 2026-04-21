@@ -27,6 +27,7 @@ final class FilterView: UIView {
     }()
 
     private var chipButtons: [UIButton] = []
+    private var chipButtonCategories: [Category?] = []
     private var activeCategory: Category? = nil
 
     // MARK: - Init
@@ -66,11 +67,13 @@ final class FilterView: UIView {
         let allChip = makeChip(title: "Todos", category: nil)
         stackView.addArrangedSubview(allChip)
         chipButtons.append(allChip)
+        chipButtonCategories.append(nil)
 
         for category in Category.allCases {
             let chip = makeChip(title: category.displayName, category: category)
             stackView.addArrangedSubview(chip)
             chipButtons.append(chip)
+            chipButtonCategories.append(category)
         }
 
         updateSelection(activeCategory: nil)
@@ -84,7 +87,6 @@ final class FilterView: UIView {
         config.baseBackgroundColor = category?.color ?? .label
 
         let button = UIButton(configuration: config)
-        button.accessibilityIdentifier = "filter_chip_\(category?.rawValue ?? "todos")"
         button.addAction(
             UIAction { [weak self] _ in self?.chipTapped(category: category) },
             for: .touchUpInside
@@ -100,14 +102,16 @@ final class FilterView: UIView {
     }
 
     private func updateSelection(activeCategory: Category?) {
-        for button in chipButtons {
-            let isActive: Bool
-            if let category = activeCategory {
-                isActive = button.accessibilityIdentifier == "filter_chip_\(category.rawValue)"
-                button.configuration?.baseForegroundColor = isActive ? .systemBackground : category.color
+        for (button, buttonCategory) in zip(chipButtons, chipButtonCategories) {
+            let isActive = buttonCategory == activeCategory
+            let ownColor: UIColor = buttonCategory?.color ?? .label
+
+            if isActive {
+                button.configuration?.baseForegroundColor = .systemBackground
+                button.configuration?.baseBackgroundColor = ownColor
             } else {
-                isActive = button.accessibilityIdentifier == "filter_chip_all"
-                button.configuration?.baseForegroundColor = isActive ? .systemBackground : .label
+                button.configuration?.baseForegroundColor = ownColor
+                button.configuration?.baseBackgroundColor = ownColor
             }
             button.isSelected = isActive
         }

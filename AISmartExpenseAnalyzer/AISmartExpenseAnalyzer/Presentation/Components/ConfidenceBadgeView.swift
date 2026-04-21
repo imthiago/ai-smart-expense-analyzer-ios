@@ -78,7 +78,6 @@ final class ConfidenceBadgeView: UIView {
             apply()
         }
 
-        accessibilityLabel = "Confidence: \(text)"
         invalidateIntrinsicContentSize()
     }
 
