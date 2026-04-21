@@ -99,18 +99,16 @@ final class FilterView: UIView {
         selectedCategory.send(category)
     }
 
-    // TODO: Tratar force unwrap
     private func updateSelection(activeCategory: Category?) {
         for button in chipButtons {
             let isActive: Bool
-            if activeCategory == nil {
-                isActive = button.accessibilityIdentifier == "filter_chip_all"
+            if let category = activeCategory {
+                isActive = button.accessibilityIdentifier == "filter_chip_\(category.rawValue)"
+                button.configuration?.baseForegroundColor = isActive ? .systemBackground : category.color
             } else {
-                isActive = button.accessibilityIdentifier == "filter_chip_\(activeCategory!.rawValue)"
+                isActive = button.accessibilityIdentifier == "filter_chip_all"
+                button.configuration?.baseForegroundColor = isActive ? .systemBackground : .label
             }
-            button.configuration?.baseForegroundColor = isActive
-                ? .systemBackground
-                : (activeCategory == nil ? .label : activeCategory!.color)
             button.isSelected = isActive
         }
     }

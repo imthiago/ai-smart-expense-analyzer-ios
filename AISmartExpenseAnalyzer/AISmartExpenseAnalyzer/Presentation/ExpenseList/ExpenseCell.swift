@@ -73,7 +73,7 @@ final class ExpenseCell: UITableViewCell {
         setupLayout()
     }
 
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder: NSCoder) { nil }
 
     // MARK: - Configuration
     func configure(with expense: Expense) {

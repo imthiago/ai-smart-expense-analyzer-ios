@@ -8,11 +8,12 @@
 import Foundation
 
 enum OpenAIRequestBuilder {
-    // TODO: Tratar force unwrap
-    static let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
-
     static func build(description: String, amount: Decimal, apiKey: String) throws -> URLRequest {
-        var request = URLRequest(url: endpoint)
+        guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
+            throw BuilderError.invalidEndpoint
+        }
+
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.timeoutInterval = 30
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
@@ -77,6 +78,17 @@ extension OpenAIRequestBuilder {
         enum CodingKeys: String, CodingKey {
             case model, messages, temperature
             case responseFormat = "response_format"
+        }
+    }
+
+    enum BuilderError: Error, LocalizedError {
+        case invalidEndpoint
+
+        var errorDescription: String? {
+            switch self {
+            case .invalidEndpoint:
+                return "OpenAI invalid URL endpoint"
+            }
         }
     }
 }

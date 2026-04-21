@@ -62,9 +62,7 @@ final class ExpenseListViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { nil }
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -136,7 +134,7 @@ final class ExpenseListViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
                 isLoading ? self?.loadingIndicator.startAnimating()
-                          : self?.loadingIndicator.stopAnimating()
+                : self?.loadingIndicator.stopAnimating()
                 if !isLoading { self?.refreshControl.endRefreshing() }
             }
             .store(in: &cancellables)
@@ -213,7 +211,7 @@ extension ExpenseListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         expenses.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ExpenseCell.reuseIdentifier,
