@@ -62,3 +62,4 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 AISmartExpenseAnalyzer/AISmartExpenseAnalyzer/.DS_Store
 AISmartExpenseAnalyzer/AISmartExpenseAnalyzer.xcodeproj/xcshareddata/xcschemes/AISmartExpenseAnalyzer.xcscheme
+.DS_Store

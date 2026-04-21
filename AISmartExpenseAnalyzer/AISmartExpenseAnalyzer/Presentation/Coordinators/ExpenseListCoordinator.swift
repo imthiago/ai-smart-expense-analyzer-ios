@@ -71,7 +71,10 @@ final class ExpenseListCoordinator: Coordinator {
     }
 
     private func showAIDecision(for expense: Expense) {
-        // TODO: To be implemented
+        guard expense.aiDecision != nil else { return }
+        let viewModel = AIDecisionViewModel(expense: expense)
+        let viewController = AIDecisionViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: true)
     }
 
     private func showInsights(for expenses: [Expense]) {
