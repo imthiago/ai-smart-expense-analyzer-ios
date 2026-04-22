@@ -9,9 +9,19 @@ import Foundation
 
 @MainActor
 final class InsightListViewModel {
-    // MARK: - Published States
-    @Published private(set) var insights: [Insight] = []
-    @Published private(set) var isLoading = false
+    var onInsightsChanged: (([Insight]) -> Void)?
+    var onLoadingChanged: ((Bool) -> Void)?
+
+    private(set) var insights: [Insight] = [] {
+        didSet { onInsightsChanged?(insights) }
+    }
+
+    private(set) var isLoading: Bool = false {
+        didSet {
+            guard isLoading != oldValue else { return }
+            onLoadingChanged?(isLoading)
+        }
+    }
 
     // MARK: - Dependencies
     private let expenses: [Expense]

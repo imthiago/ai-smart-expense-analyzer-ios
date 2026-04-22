@@ -5,7 +5,6 @@
 //  Created by Thiago Oliveira on 20/04/26.
 //
 
-import Combine
 import UIKit
 
 final class AddExpenseViewController: UIViewController {
@@ -58,9 +57,6 @@ final class AddExpenseViewController: UIViewController {
     }()
 
     private let loadingIndicator = UIActivityIndicatorView(style: .medium)
-
-    // MARK: - Combine
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(viewModel: AddExpenseViewModel) {
@@ -148,20 +144,17 @@ final class AddExpenseViewController: UIViewController {
 // MARK: - Binding
 extension AddExpenseViewController {
     private func bindViewModel() {
-        viewModel.$isFormValid
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isValid in
-                self?.submitButton.isEnabled = isValid
-                self?.submitButton.alpha = isValid ? 1.0 : 0.5
-            }
-            .store(in: &cancellables)
+        viewModel.onFormValidChanged = { [weak self] isValid in
+            self?.submitButton.isEnabled = isValid
+            self?.submitButton.alpha = isValid ? 1.0 : 0.5
+        }
 
-        viewModel.$state
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                self?.handleState(state)
-            }
-            .store(in: &cancellables)
+        viewModel.onStateChanged = { [weak self] state in
+            self?.handleState(state)
+        }
+
+        submitButton.isEnabled = viewModel.isFormValid
+        submitButton.alpha = viewModel.isFormValid ? 1.0 : 0.5
     }
 
     private func bindFields() {

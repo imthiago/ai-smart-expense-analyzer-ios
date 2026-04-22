@@ -6,14 +6,27 @@
 //
 
 import Foundation
-import Combine
 
 @MainActor
 final class ExpenseListViewModel {
-    // MARK: - Published States
-    @Published private(set) var expenses: [Expense] = []
-    @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage: String?
+    var onExpensesChanged: (([Expense]) -> Void)?
+    var onLoadingChanged: ((Bool) -> Void)?
+    var onErrorChanged: ((String?) -> Void)?
+
+    private(set) var expenses: [Expense] = [] {
+        didSet { onExpensesChanged?(expenses) }
+    }
+
+    private(set) var isLoading: Bool = false {
+        didSet {
+            guard isLoading != oldValue else { return }
+            onLoadingChanged?(isLoading)
+        }
+    }
+
+    private(set) var errorMessage: String? {
+        didSet { onErrorChanged?(errorMessage) }
+    }
 
     // MARK: - Coordinator Callbacks
     var onAddExpense: (() -> Void)?

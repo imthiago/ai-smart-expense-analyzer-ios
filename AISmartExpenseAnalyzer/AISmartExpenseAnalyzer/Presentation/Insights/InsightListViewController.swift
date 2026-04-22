@@ -5,7 +5,6 @@
 //  Created by Thiago Oliveira on 20/04/26.
 //
 
-import Combine
 import UIKit
 
 final class InsightListViewController: UIViewController {
@@ -43,9 +42,6 @@ final class InsightListViewController: UIViewController {
     }()
 
     private var insights: [Insight] = []
-
-    // MARK: - Combine
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(viewModel: InsightListViewModel) {
@@ -93,20 +89,14 @@ extension InsightListViewController {
 // MARK: - Binding
 extension InsightListViewController {
     private func bindViewModel() {
-        viewModel.$insights
-            .receive(on: RunLoop.main)
-            .sink { [weak self] insights in
-                self?.updateInsights(insights)
-            }
-            .store(in: &cancellables)
+        viewModel.onInsightsChanged = { [weak self] insights in
+            self?.updateInsights(insights)
+        }
 
-        viewModel.$isLoading
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isLoading in
-                isLoading ? self?.loadingIndicator.startAnimating()
-                          : self?.loadingIndicator.stopAnimating()
-            }
-            .store(in: &cancellables)
+        viewModel.onLoadingChanged = { [weak self] isLoading in
+            isLoading ? self?.loadingIndicator.startAnimating()
+                      : self?.loadingIndicator.stopAnimating()
+        }
     }
 }
 

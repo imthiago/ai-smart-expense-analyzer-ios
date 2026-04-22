@@ -5,11 +5,10 @@
 //  Created by Thiago Oliveira on 20/04/26.
 //
 
-import Combine
 import UIKit
 
 final class FilterView: UIView {
-    let selectedCategory = PassthroughSubject<Category?, Never>()
+    var onCategorySelected: ((Category?) -> Void)?
 
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -98,7 +97,7 @@ final class FilterView: UIView {
         guard category != activeCategory else { return }
         activeCategory = category
         updateSelection(activeCategory: category)
-        selectedCategory.send(category)
+        onCategorySelected?(category)
     }
 
     private func updateSelection(activeCategory: Category?) {

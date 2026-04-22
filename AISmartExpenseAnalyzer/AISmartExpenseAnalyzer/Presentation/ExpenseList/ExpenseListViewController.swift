@@ -5,7 +5,6 @@
 //  Created by Thiago Oliveira on 20/04/26.
 //
 
-import Combine
 import UIKit
 
 final class ExpenseListViewController: UIViewController {
@@ -52,9 +51,6 @@ final class ExpenseListViewController: UIViewController {
 
     // MARK: - Data Source
     private var expenses: [Expense] = []
-
-    // MARK: - Combine
-    private var cancellables = Set<AnyCancellable>()
 
     init(viewModel: ExpenseListViewModel, insightsEnabled: Bool = true) {
         self.viewModel = viewModel
@@ -122,38 +118,28 @@ final class ExpenseListViewController: UIViewController {
 
     // MARK: - Binding
     private func bindViewModel() {
-        viewModel.$expenses
-            .receive(on: RunLoop.main)
-            .sink { [weak self] expenses in
-                self?.updateExpenses(expenses)
-            }
-            .store(in: &cancellables)
+        viewModel.onExpensesChanged = { [weak self] expenses in
+            self?.updateExpenses(expenses)
+        }
 
-        viewModel.$isLoading
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isLoading in
-                isLoading ? self?.loadingIndicator.startAnimating()
-                : self?.loadingIndicator.stopAnimating()
-                if !isLoading { self?.refreshControl.endRefreshing() }
-            }
-            .store(in: &cancellables)
+        viewModel.onLoadingChanged = { [weak self] isLoading in
+            isLoading ? self?.loadingIndicator.startAnimating()
+                      : self?.loadingIndicator.stopAnimating()
 
-        viewModel.$errorMessage
-            .receive(on: RunLoop.main)
-            .compactMap { $0 }
-            .sink { [weak self] message in
-                self?.showError(message)
+            if !isLoading {
+                self?.refreshControl.endRefreshing()
             }
-            .store(in: &cancellables)
+        }
 
-        filterView.selectedCategory
-            .map { category in
-                category.map { ExpenseFilter(category: $0) } ?? .empty
-            }
-            .sink { [weak self] filter in
-                self?.viewModel.applyFilter(filter)
-            }
-            .store(in: &cancellables)
+        viewModel.onErrorChanged = { [weak self] message in
+            guard let message else { return }
+            self?.showError(message)
+        }
+
+        filterView.onCategorySelected = { [weak self] category in
+            let filter = category.map { ExpenseFilter(category: $0) } ?? .empty
+            self?.viewModel.applyFilter(filter)
+        }
     }
 
     // MARK: - Update TableView

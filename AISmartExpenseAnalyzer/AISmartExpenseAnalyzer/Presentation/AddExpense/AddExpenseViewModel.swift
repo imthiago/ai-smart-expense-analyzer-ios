@@ -5,7 +5,6 @@
 //  Created by Thiago Oliveira on 20/04/26.
 //
 
-import Combine
 import Foundation
 
 @MainActor
@@ -18,11 +17,23 @@ final class AddExpenseViewModel {
         case failure(String)
     }
 
-    @Published private(set) var state: State = .idle
-    @Published private(set) var isFormValid = false
-    @Published var amountText: String = ""
-    @Published var descriptionText: String = ""
-    @Published var date: Date = .init()
+    var onStateChanged: ((State) -> Void)?
+    var onFormValidChanged: ((Bool) -> Void)?
+
+    private(set) var state: State = .idle {
+        didSet { onStateChanged?(state) }
+    }
+
+    private(set) var isFormValid: Bool = false {
+        didSet {
+            guard isFormValid != oldValue else { return }
+            onFormValidChanged?(isFormValid)
+        }
+    }
+
+    var amountText: String = "" { didSet { revalidate() } }
+    var descriptionText: String = "" { didSet { revalidate() } }
+    var date: Date = .init()
 
     // MARK: - Coordinator Callbacks
     var onDismiss: (() -> Void)?
@@ -30,11 +41,9 @@ final class AddExpenseViewModel {
 
     // MARK: - Dependencies
     private let addExpenseUseCase: AddExpenseUseCaseProtocol
-    private var cancellabled = Set<AnyCancellable>()
 
     init(addExpenseUseCase: AddExpenseUseCaseProtocol) {
         self.addExpenseUseCase = addExpenseUseCase
-        bindValidation()
     }
 
     func submitTapped() {
@@ -64,13 +73,13 @@ final class AddExpenseViewModel {
         onDismiss?()
     }
 
-    private func bindValidation() {
-        Publishers.CombineLatest($amountText, $descriptionText)
-            .map { amount, description in
-                let normalized = amount.replacingOccurrences(of: ",", with: ".")
-                guard let value = Decimal(string: normalized), value > 0 else { return false }
-                return !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            }
-            .assign(to: &$isFormValid)
+    private func revalidate() {
+        let normalized = amountText.replacingOccurrences(of: ".", with: ",")
+        guard let value = Decimal(string: normalized), value > 0 else {
+            isFormValid = false
+            return
+        }
+
+        isFormValid = !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
