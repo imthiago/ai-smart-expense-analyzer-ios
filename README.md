@@ -2,6 +2,12 @@
 
 App iOS para registro e categorização automática de despesas usando IA. O usuário adiciona uma despesa com valor e descrição, e o app categoriza automaticamente via OpenAI — ou de forma offline com um provider mock baseado em palavras-chave.
 
+## Funcionamento online
+https://github.com/user-attachments/assets/de19fe97-8007-4a40-9b1b-880c668d4807
+
+## Funcionamento offline
+https://github.com/user-attachments/assets/e915a686-ac0f-4209-92fa-41d752c4fd12
+
 ## Funcionalidades
 
 - Registro de despesas com valor, descrição e data
