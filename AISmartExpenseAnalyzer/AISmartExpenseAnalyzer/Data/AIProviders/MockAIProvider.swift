@@ -10,11 +10,23 @@ import Foundation
 struct MockAIProvider: AIProviderProtocol {
     var providerName: String = "Mock"
 
+    private enum Threshold {
+        static let noMatchConfidence: Double = 0.30
+        static let baseConfidence: Double = 0.40
+        static let confidenceScale: Double = 0.55
+        static let maxConfidence: Double = 0.95
+        static let alternativeScale: Double = 0.45
+        static let maxAlternativeConfidence: Double = 0.45
+        static let fallbackAlternativeConfidence: Double = 0.10
+        static let maxAlternatives = 2
+        static let maxKeywordsInReasoning = 3
+    }
+
     private static let keywordMap: [String: Category] = [
         // Comidas e Bebidas
-        "Restaurante": .food, "lunch": .food, "Jantar": .food,
-        "Café": .food, "coffee": .food, "pizza": .food,
-        "Hamburguer": .food, "sushi": .food, "delivery": .food,
+        "restaurante": .food, "lunch": .food, "jantar": .food,
+        "café": .food, "coffee": .food, "pizza": .food,
+        "hamburguer": .food, "sushi": .food, "delivery": .food,
         "ifood": .food, "rappi": .food, "uber eats": .food,
         "snack": .food, "padaria": .food, "cafe": .food,
 
@@ -48,55 +60,80 @@ struct MockAIProvider: AIProviderProtocol {
     ]
 
     func categorize(description: String, amount: Decimal) async throws -> AIDecision {
-        let lowercased = description.lowercased()
+        let result = matchKeywords(in: description)
+        let (category, confidence) = resolveCategory(from: result)
+        let reasoning = buildReasoning(for: description, category: category, confidence: confidence, matchedKeywords: result.matchedKeywords)
+        let alternatives = buildAlternatives(from: result)
 
+        return AIDecision(
+            suggestedCategory: category,
+            confidence: confidence,
+            reasoning: reasoning,
+            alternativeCategories: alternatives,
+            providerName: providerName,
+            processedAt: .init()
+        )
+    }
+
+    private struct MatchResult {
+        let scores: [Category: Int]
+        let matchedKeywords: [String]
+
+        var totalMatches: Double {
+            Double(scores.values.reduce(0, +))
+        }
+
+        var rankedCategories: [(key: Category, value: Int)] {
+            scores.sorted { $0.value > $1.value }
+        }
+    }
+
+    // MARK: - Keyword Matching
+    private func matchKeywords(in description: String) -> MatchResult {
+        let lowercased = description.lowercased()
         var scores: [Category: Int] = [:]
         var matchedKeywords: [String] = []
 
-        for (keyword, category) in Self.keywordMap {
-            if lowercased.contains(keyword) {
-                scores[category, default: 0] += 1
-                matchedKeywords.append(keyword)
+        for (keyword, category) in Self.keywordMap where lowercased.contains(keyword) {
+            scores[category, default: 0] += 1
+            matchedKeywords.append(keyword)
+        }
+
+        return MatchResult(scores: scores, matchedKeywords: matchedKeywords)
+    }
+
+    // MARK: - Category
+    private func resolveCategory(from result: MatchResult) -> (Category, Double) {
+        guard let top = result.rankedCategories.first, result.totalMatches > 0 else {
+            return (.other, Threshold.noMatchConfidence)
+        }
+
+        let dominance = Double(top.value) / result.totalMatches
+        let confidence = min(Threshold.baseConfidence + dominance * Threshold.confidenceScale, Threshold.maxConfidence)
+
+        return (top.key, confidence)
+    }
+
+    // MARK: - Reasoning
+    private func buildReasoning(for description: String, category: Category, confidence: Double, matchedKeywords: [String]) -> String {
+        guard !matchedKeywords.isEmpty else {
+            return "Nenhuma palavra chave foi identificada em \"\(description)\". Categoria '\(Category.other.displayName)' atribuída por padrão."
+        }
+
+        let keywordList = matchedKeywords.prefix(Threshold.maxKeywordsInReasoning).joined(separator: ", ")
+        return  "Palavra(s) chave detectada(s): \(keywordList). Melhor correspondência: \(category.displayName) (\(Int(confidence * 100))% de confiança)."
+    }
+
+    // MARK: - Alternatives
+    private func buildAlternatives(from result: MatchResult) -> [CategoryConfidence] {
+        result.rankedCategories
+            .dropFirst()
+            .prefix(Threshold.maxAlternatives)
+            .map { entry in
+                let confidence = result.totalMatches > 0
+                ? min(Double(entry.value) / result.totalMatches + Threshold.alternativeScale, Threshold.maxAlternativeConfidence)
+                : Threshold.fallbackAlternativeConfidence
+                return CategoryConfidence(category: entry.key, confidence: confidence)
             }
-        }
-
-        // Resolve categoria vencedora e confiança
-        let sorted = scores.sorted { $0.value > $1.value }
-        let topCategory = sorted.first?.key ?? .other
-        let topScore = Double(sorted.first?.value ?? 0)
-        let totalMatches = Double(scores.values.reduce(0, +))
-
-        let confidence: Double
-        if totalMatches == 0 {
-            confidence = 0.30   // Nenhuma palavra-chave correspondida
-        } else {
-            // Escala de 0.40 (correspondência única) a 0.95 (múltiplas correspondências fortes)
-            confidence = min(0.40 + (topScore / totalMatches) * 0.55, 0.95)
-        }
-
-        let reasoning: String
-        if matchedKeywords.isEmpty {
-            reasoning = "Nenhuma palavra-chave foi identificada em \"\(description)\". Categoria '\(Category.other.displayName)' atribuída por padrão."
-        } else {
-            let keywordList = matchedKeywords.prefix(3).joined(separator: ", ")
-            reasoning = "Palavra(s)-chave detectada(s): \(keywordList). Melhor correspondência: \(topCategory.displayName) (\(Int(confidence * 100))% de confiança)."
-        }
-
-        // Constrói categorias alternativas (top 2 segundos colocados)
-        let alternatives = sorted.dropFirst().prefix(2).map { entry -> CategoryConfidence in
-            let altConfidence = totalMatches > 0
-            ? min(Double(entry.value) / totalMatches * 0.45, 0.80)
-            : 0.10
-            return CategoryConfidence(category: entry.key, confidence: altConfidence)
-        }
-
-        return AIDecision(
-            suggestedCategory: topCategory,
-            confidence: confidence,
-            reasoning: reasoning,
-            alternativeCategories: Array(alternatives),
-            providerName: providerName,
-            processedAt: Date()
-        )
     }
 }
