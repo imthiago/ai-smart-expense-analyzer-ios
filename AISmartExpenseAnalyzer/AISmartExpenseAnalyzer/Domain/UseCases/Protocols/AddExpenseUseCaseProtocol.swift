@@ -12,6 +12,7 @@ import Foundation
 /// 1. Validação da entrada pelo usuário (amount >0, description preenchida)
 /// 2. Persistir a despesa localmente
 /// 3. Adicionar categorização de IA de forma async
+/// @mockable
 protocol AddExpenseUseCaseProtocol {
     /// Cria e persiste uma nova despesa
     ///

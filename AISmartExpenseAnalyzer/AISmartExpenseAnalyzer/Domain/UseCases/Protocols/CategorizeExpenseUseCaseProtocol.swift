@@ -11,6 +11,7 @@ import Foundation
 ///
 /// Use case responsável por encapsular a interação com `IAProviderProtocol` e separado de `AddExpenseUseCaseProtocol`
 /// de forma intencional, para que a categorização possa ser re-adicionada
+/// @mockable
 protocol CategorizeExpenseUseCaseProtocol {
     /// Executa a categorização de uma despesa fornecida e persiste o resultado.
     ///

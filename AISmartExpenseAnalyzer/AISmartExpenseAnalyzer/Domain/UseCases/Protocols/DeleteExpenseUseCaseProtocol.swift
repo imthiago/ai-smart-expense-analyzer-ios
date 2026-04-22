@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// @mockable
 protocol DeleteExpenseUseCaseProtocol {
     /// Remove a despesa com o id fornecido do armazenamento
     /// - Throws: `RepositoryError.notFound` se nenhuma despesa correspondente existir

@@ -14,6 +14,7 @@ import Foundation
 ///
 /// - Note: `providerName` é parte da interface pública de forma intencional
 /// para que `AIDecision` possa registrar qual provider gerou determinado resultado e exibindo na UI.
+/// @mockable
 protocol AIProviderProtocol {
     /// Identificador para o provider (Ex: "OpenAI GPT-4o", "Mock")
     var providerName: String { get }

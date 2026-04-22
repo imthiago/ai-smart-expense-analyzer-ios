@@ -10,6 +10,7 @@ import Foundation
 /// Contrato para recuperar uma lista de despesas,
 /// podendo ser filtradas de forma opcional,
 /// mantendo aqui uma possível lógica de filtro, tirando a responsabilidade da ViewModel.
+/// @mockable
 protocol GetExpensesUseCaseProtocol {
     /// Busca por despesas de acordo com o filtro fornecido
     ///

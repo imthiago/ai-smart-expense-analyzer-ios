@@ -11,6 +11,7 @@ import Foundation
 ///
 /// A camada de `Domain` depende apenas deste protocolo afim de manter a testabilidade e ser agnóstico ao tipo de armazenamento.
 /// Todos os métodos são `async throws` para dar suporte a armazenamento local ou sync remoto sem alteração do contrato
+/// /// @mockable
 protocol ExpenseRepositoryProtocol {
     /// Persiste uma nova despesa
     /// - Throws: Se a persistência falhar

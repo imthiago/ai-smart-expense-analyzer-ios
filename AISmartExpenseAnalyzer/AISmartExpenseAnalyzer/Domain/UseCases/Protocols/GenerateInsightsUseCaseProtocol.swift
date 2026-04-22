@@ -11,6 +11,7 @@ import Foundation
 ///
 /// Insights são computados por demanda a partir dos dados das despesas e não são armazenados.
 /// Este use case é responsável por encapsular a lógica de identificar despesas recorrentes, categoria dominante.
+/// @mockable
 protocol GenerateInsightsUseCaseProtocol {
     /// Analisa as despesas fornecidas e retorna uma lista de insights
     ///
