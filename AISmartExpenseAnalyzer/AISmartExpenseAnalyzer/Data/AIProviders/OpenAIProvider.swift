@@ -77,10 +77,10 @@ struct OpenAIProvider: AIProviderProtocol {
 
         let alternatives = payload.alternatives.compactMap { alternative -> CategoryConfidence? in
             guard let category = Category(rawValue: alternative.category) else { return nil }
-            return .init(category: category, confidence: alternative.confidence)
+            return CategoryConfidence(category: category, confidence: alternative.confidence)
         }
 
-        return .init(
+        return AIDecision(
             suggestedCategory: category,
             confidence: max(0, min(payload.confidence, 1.0)),
             reasoning: payload.reasoning,

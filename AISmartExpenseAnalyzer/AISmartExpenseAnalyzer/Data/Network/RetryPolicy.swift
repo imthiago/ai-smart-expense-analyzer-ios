@@ -1,5 +1,5 @@
 //
-//  RetryPolocy.swift
+//  RetryPolicy.swift
 //  AISmartExpenseAnalyzer
 //
 //  Created by Thiago Oliveira on 20/04/26.
@@ -15,7 +15,6 @@ import Foundation
 ///
 /// A lógica de implementação leva em conta o erro retornado da API.
 /// Por ex.: Erro 401 (não autorizado)
-///
 struct RetryPolicy {
     let maxAttempts: Int
     let baseDelay: TimeInterval

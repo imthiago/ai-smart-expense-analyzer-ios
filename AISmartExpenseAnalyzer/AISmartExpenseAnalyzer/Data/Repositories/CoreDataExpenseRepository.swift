@@ -8,12 +8,6 @@
 import CoreData
 import Foundation
 
-/// Implementação do protocolo `ExpenseRepositoryProtocol`
-/// Para uso em testes:
-/// /// ```swift
-/// let stack = try CoreDataStack(inMemory: true)
-/// let repo = CoreDataExpenseRepository(context: stack.viewContext)
-/// ```
 final class CoreDataExpenseRepository: ExpenseRepositoryProtocol {
     // MARK: - Dependencies
     private let context: NSManagedObjectContext
