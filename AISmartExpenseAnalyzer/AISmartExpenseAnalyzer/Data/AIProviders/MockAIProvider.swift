@@ -26,7 +26,7 @@ struct MockAIProvider: AIProviderProtocol {
         // Comidas e Bebidas
         "restaurante": .food, "lunch": .food, "jantar": .food,
         "café": .food, "coffee": .food, "pizza": .food,
-        "hamburguer": .food, "sushi": .food, "delivery": .food,
+        "hambúrguer": .food, "sushi": .food, "delivery": .food,
         "ifood": .food, "rappi": .food, "uber eats": .food,
         "snack": .food, "padaria": .food, "cafe": .food,
 
