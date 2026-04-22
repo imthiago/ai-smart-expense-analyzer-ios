@@ -49,4 +49,40 @@ final class GenerateInsightsUseCaseTests: XCTestCase {
             XCTAssertEqual(category, .food)
         }
     }
+
+    func testExecute_detectsRecurringExpense_whenDescriptionAppears3Times() async throws {
+        let expenses = (0..<3).map { _ in
+            TestFixtures.makeExpense(description: "Netflix")
+        }
+
+        guard let result = try await sut?.execute(for: expenses) else {
+            XCTFail("Sut result cannot be nil")
+            return
+        }
+
+        let recurring = result.first {
+            if case .recurringExpense = $0.type { return true }
+            return false
+        }
+
+        XCTAssertNotNil(recurring)
+    }
+
+    func testExecute_doesNotDetectRecurring_whenDescriptionAppearsLessThan3Times() async throws {
+        let expenses = (0..<2).map { _ in
+            TestFixtures.makeExpense(description: "Netflix")
+        }
+
+        guard let result = try await sut?.execute(for: expenses) else {
+            XCTFail("Sut result cannot be nil")
+            return
+        }
+
+        let recurring = result.first {
+            if case .recurringExpense = $0.type { return true }
+            return false
+        }
+
+        XCTAssertNil(recurring)
+    }
 }
