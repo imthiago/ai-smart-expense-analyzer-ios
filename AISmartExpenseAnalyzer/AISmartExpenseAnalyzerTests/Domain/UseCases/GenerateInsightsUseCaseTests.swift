@@ -26,4 +26,27 @@ final class GenerateInsightsUseCaseTests: XCTestCase {
         }
         XCTAssertTrue(result.isEmpty)
     }
+
+    func testExecute_detectsDominantCategory() async throws {
+        let expenses = [
+            TestFixtures.makeExpense(amount: 200, category: .food),
+            TestFixtures.makeExpense(amount: 50, category: .transport),
+            TestFixtures.makeExpense(amount: 100, category: .food)
+        ]
+
+        guard let result = try await sut?.execute(for: expenses) else {
+            XCTFail("Sut result cannot be nil")
+            return
+        }
+
+        let dominant = result.first {
+            if case .dominantCategory = $0.type { return true }
+            return false
+        }
+
+        XCTAssertNotNil(dominant)
+        if case .dominantCategory(let category) = dominant?.type {
+            XCTAssertEqual(category, .food)
+        }
+    }
 }
