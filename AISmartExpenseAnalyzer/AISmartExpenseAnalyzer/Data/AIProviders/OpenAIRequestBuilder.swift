@@ -32,9 +32,7 @@ enum OpenAIRequestBuilder {
         request.httpBody = try JSONEncoder().encode(body)
         return request
     }
-    
-    /// Instrui o modelo a agir como um categorizador financeiro e sempre
-    /// responder com um schema JSON estrito — sem prosa, sem markdown.
+
     private static let systemPrompt = """
         You are a financial expense categorizer. Your job is to classify expense descriptions \
         into exactly one of these categories: food, transport, health, entertainment, shopping, utilities, other.

@@ -7,7 +7,6 @@
 
 import Foundation
 
-/// Realiza a classificação da despesa pelo provider e persiste o resultado
 final class CategorizeExpenseUseCase: CategorizeExpenseUseCaseProtocol {
     // MARK: - Dependencies
     private let aiProvider: AIProviderProtocol

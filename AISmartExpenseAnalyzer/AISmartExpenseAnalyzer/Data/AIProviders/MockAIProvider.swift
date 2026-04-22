@@ -7,12 +7,6 @@
 
 import Foundation
 
-/// Implementação de um provider mockado com classificação de despesas baseado na descrição
-/// A implementação tem dois objetivos:
-/// 1. Uso do app quando não houver uma conexão ativa
-/// 2. Possíveis testes de integração
-///
-/// Para testes unitários, usa-se um stub definido como `StubAIProvider` no target de testes
 struct MockAIProvider: AIProviderProtocol {
     var providerName: String = "Mock"
 
@@ -56,7 +50,6 @@ struct MockAIProvider: AIProviderProtocol {
     func categorize(description: String, amount: Decimal) async throws -> AIDecision {
         let lowercased = description.lowercased()
 
-        // Acumula pontuações de correspondência por categoria
         var scores: [Category: Int] = [:]
         var matchedKeywords: [String] = []
 

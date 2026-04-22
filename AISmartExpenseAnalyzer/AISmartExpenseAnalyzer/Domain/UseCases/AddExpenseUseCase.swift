@@ -7,12 +7,6 @@
 
 import Foundation
 
-/// Valida, persiste e inicializa a classificação pelo provider para uma nova despesa
-///
-/// Este use case tem por objetivo realizar primeiro a persistência local da despesa antes da classificação pelo provider
-/// Isso significa que uma falha de rede nunca resulta em perda de dados.
-/// Uma vez que o registro é salvo como `isCategorizationPending = true`, um mecanismo de
-/// retry em background é responsável por categorizar despesas pendentes quando a conexão for restaurada
 final class AddExpenseUseCase: AddExpenseUseCaseProtocol {
     // MARK: - Dependencies
     private let expenseRepository: ExpenseRepositoryProtocol

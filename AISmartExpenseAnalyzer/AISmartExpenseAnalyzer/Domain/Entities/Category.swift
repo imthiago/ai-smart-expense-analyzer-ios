@@ -7,10 +7,6 @@
 
 import Foundation
 
-/// Representa a categoria de gastos de uma despesa
-///
-/// `Category` é utilizado como fonte única de verdade para a lógica
-/// de categorização de despesas manualmente ou por IA.
 enum Category: String, CaseIterable, Codable, Equatable {
     case food           = "food"
     case transport      = "transport"

@@ -16,13 +16,6 @@ import Foundation
 /// A lógica de implementação leva em conta o erro retornado da API.
 /// Por ex.: Erro 401 (não autorizado)
 ///
-/// Utilização:
-/// ```swift
-/// let policy = RetryPolicy(maxAttempts: 3, baseDelay: 1.0)
-/// let result = try await policy.execute {
-///     try await openAIProvider.categorize(description: desc, amount: amount)
-/// }
-/// ```
 struct RetryPolicy {
     let maxAttempts: Int
     let baseDelay: TimeInterval

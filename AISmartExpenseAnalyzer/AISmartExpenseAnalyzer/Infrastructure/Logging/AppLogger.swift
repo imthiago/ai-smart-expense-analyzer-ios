@@ -25,20 +25,6 @@ enum LogLevel {
 }
 
 // MARK: - AppLogger
-
-/// Logger estruturado baseado no sistema de logs unificado da própria Apple (`OSLog`)
-/// - Permite exibição no app console e Instruments com filtragem
-/// - Dados sensíveis podem ser mascarados em produção
-/// - Otimização em tempo de compilação quando o nível de log não está ativo
-///
-/// ## Uso
-/// ```swift
-/// logger.log(.ai, level: .info, message: "Categorization complete", metadata: [
-///     "category": "food",
-///     "confidence": "0.92"
-/// ])
-/// // → [AI] Categorization complete | category=food, confidence=0.92
-/// ```
 final class AppLogger {
     // MARK: - Properties
     private let subsystem: String
@@ -48,13 +34,6 @@ final class AppLogger {
         self.subsystem = subsystem
     }
 
-    /// Registra ume mensagem estruturada no sistema de log
-    ///
-    /// - Parameters:
-    ///  - category: Categoria do sistema do log
-    ///  - level: Nível de severidade
-    ///  - message: Descrição do evento
-    ///  - metadata: Chave-valor opcionais para filtros
     func log(_ category: LogCategory, level: LogLevel, message: String, metadata: [String: String] = [:]) {
         let osLogger = Logger(subsystem: subsystem, category: category.rawValue)
 

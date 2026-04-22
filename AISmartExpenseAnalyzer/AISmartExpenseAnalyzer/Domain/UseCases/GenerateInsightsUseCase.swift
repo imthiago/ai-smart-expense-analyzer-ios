@@ -7,12 +7,6 @@
 
 import Foundation
 
-/// Obtém insights de gastos a partir de uma lista de despesas.
-///
-/// Use case responsável por encapsular a lógica de negócio .
-/// Regras atuais:
-/// - Categoria dominante: Categoria com o maior gasto total
-/// - Despesa recorrente: Descrição que contém `recurringThreshold` ou mais vezes.
 final class GenerateInsightsUseCase: GenerateInsightsUseCaseProtocol {
     // MARK: - Configuration
 

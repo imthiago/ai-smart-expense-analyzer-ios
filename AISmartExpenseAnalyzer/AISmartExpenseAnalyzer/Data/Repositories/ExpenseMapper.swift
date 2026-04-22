@@ -8,14 +8,8 @@
 import CoreData
 import Foundation
 
-/// Mapper responsável por converter entidade de `Domain` `Expense` e o objeto `CoreData` `ExpenseEntity
-/// Objetivo desse mapper ter sido criado, é manter a lógica isolada para que camada de `Domain` nunca importe `CoreData`
-/// Possibilitar que a camada de persistência seja agnóstica ao armazenamento utilizado
 enum ExpenseMapper {
     // MARK: - CoreData -> Domain
-
-    /// Converte um objeto do `CoreData` para uma entidade de `Domain` `Expense`
-    /// - Throws: `MappingError.missingRequiredField` se um atributo não opcional não for informado
     static func toDomain(_ entity: ExpenseEntity) throws -> Expense {
         guard let id = entity.id else {
             throw MappingError.missingRequiredField("id")
@@ -51,8 +45,6 @@ enum ExpenseMapper {
     }
 
     // MARK: - Domain -> CoreData
-
-    /// Popula um objeto CoreData a partir de um objeto de `Domain`
     static func populate(entity: ExpenseEntity, from expense: Expense) {
         entity.id = expense.id
         entity.amount = NSDecimalNumber(decimal: expense.amount)

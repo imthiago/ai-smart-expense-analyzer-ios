@@ -66,8 +66,6 @@ final class AppContainer {
         DeleteExpenseUseCase(expenseRepository: expenseRepository)
     }()
 
-    /// Cria o container e carrega o armazenamento persistente
-    /// - Throws: Lança um erro caso `CoreDataStack` não possa ser inicializado
     init() throws {
         featureFlags = FeatureFlags()
         logger = AppLogger()

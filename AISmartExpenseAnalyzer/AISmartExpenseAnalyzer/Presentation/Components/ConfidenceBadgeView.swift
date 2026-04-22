@@ -7,11 +7,6 @@
 
 import UIKit
 
-///  Badge simples para formatar e exibir o nível de confiança da IA por cor e texto
-///  Regras de exibição:
-///  1. Verde >= 80% para confiança alta
-///  2. Laranja >= 50% para confiança média
-///  3. Vermelho < 20% para confiança baixa
 final class ConfidenceBadgeView: UIView {
     // MARK: - Components
     private let label: UILabel = {

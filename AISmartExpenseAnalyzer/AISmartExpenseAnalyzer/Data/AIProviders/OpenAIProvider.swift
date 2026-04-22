@@ -7,11 +7,6 @@
 
 import Foundation
 
-/// Implementação do protocolo `AIProviderProtocol` baseada na API da OpenAI.
-/// Para utilização do provider, as variáveis de ambiente abaixo devem ser definidas:
-/// `USE_REAL_AI=1`
-/// `OPENAI_API_KEY`
-/// Ambas são lidas ao rodar o app e também por  `FeatureFlags` e `Secrets`
 struct OpenAIProvider: AIProviderProtocol {
     // MARK: - Properties
     var providerName: String = "OpenAI GPT-4o mini"
