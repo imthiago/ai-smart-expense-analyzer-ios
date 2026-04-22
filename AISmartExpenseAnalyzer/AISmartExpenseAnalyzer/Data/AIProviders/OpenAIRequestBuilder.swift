@@ -51,6 +51,8 @@ enum OpenAIRequestBuilder {
         
         The "alternatives" array should contain up to 2 runner-up categories, ordered by confidence descending. \
         If no alternatives apply, return an empty array.
+        IMPORTANT: The "reasoning" field must always be written in Brazilian Portuguese (pt-BR), \
+        regardless of the language of the expense description.
         """
 
     private static func userPrompt(description: String, amount: Decimal) -> String {

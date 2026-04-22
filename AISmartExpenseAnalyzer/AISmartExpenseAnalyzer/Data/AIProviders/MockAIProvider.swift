@@ -83,10 +83,10 @@ struct MockAIProvider: AIProviderProtocol {
 
         let reasoning: String
         if matchedKeywords.isEmpty {
-            reasoning = "No specific keywords were detected in \"\(description)\". Assigned to '\(Category.other.displayName)' by default."
+            reasoning = "Nenhuma palavra-chave foi identificada em \"\(description)\". Categoria '\(Category.other.displayName)' atribuída por padrão."
         } else {
             let keywordList = matchedKeywords.prefix(3).joined(separator: ", ")
-            reasoning = "Detected keyword(s): \(keywordList). Best match: \(topCategory.displayName) (\(Int(confidence * 100))% confidence)."
+            reasoning = "Palavra(s)-chave detectada(s): \(keywordList). Melhor correspondência: \(topCategory.displayName) (\(Int(confidence * 100))% de confiança)."
         }
 
         // Constrói categorias alternativas (top 2 segundos colocados)

@@ -85,7 +85,7 @@ final class ConfidenceBadgeView: UIView {
         let percentage = "\(Int((confidence * 100).rounded()))%"
 
         switch confidence {
-        case 0.80:
+        case 0.80...:
             return (.systemGreen.withAlphaComponent(0.15), .systemGreen, percentage)
         case 0.50..<0.80:
             return (.systemOrange.withAlphaComponent(0.15), .systemOrange, percentage)

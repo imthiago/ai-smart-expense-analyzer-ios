@@ -57,7 +57,7 @@ extension GenerateInsightsUseCase {
         let formattedAmount = topAmount.formatted(.currency(code: "BRL"))
 
         return .init(type: .dominantCategory(topCategory),
-                     message: "You spent the most on \(topCategory.displayName) this period (\(formattedAmount)).",
+                     message: "Você gastou mais com \(topCategory.displayName) neste período (\(formattedAmount)).",
                      relevantExpenseIds: relevantIds)
     }
 }
@@ -75,7 +75,7 @@ extension GenerateInsightsUseCase {
                 let displayName = group.first?.description ?? ""
                 let count = group.count
                 return .init(type: .recurringExpense(description: displayName),
-                             message: "\"\(displayName)\" appears \(count) times — possible recurring expense.",
+                             message: "\"\(displayName)\" aparece \(count) vezes — possível despesa recorrente.",
                              relevantExpenseIds: group.map(\.id))
             }
     }
